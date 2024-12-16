@@ -1,0 +1,55 @@
+meta {
+  name: Fetch a list of books
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/books
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+}
+
+tests {
+  const Ajv = require('ajv');
+  const ajv = new Ajv({ allErrors: true })
+  
+  const schema = {
+    "type": "array",
+    "items": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "genre": {
+          "type": "string"
+        },
+        "yearPublished": {
+          "type": "number"
+        },
+        "checkedOut": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string"
+        }
+      }
+    }
+  }
+  
+  test('res body has the correct schema', () => {
+    expect(ajv.validate(schema, res.body)).to.be.true
+  })
+}

@@ -1,0 +1,23 @@
+meta {
+  name: Verify book exists
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/books/:id
+  body: none
+  auth: none
+}
+
+params:path {
+  id: {{bookId}}
+}
+
+assert {
+  res.status: eq 200
+}
+
+script:pre-request {
+  bru.setVar('bookId' , bru.getEnvVar('bookId'))
+}

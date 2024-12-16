@@ -1,0 +1,40 @@
+meta {
+  name: Create a new book
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/books
+  body: json
+  auth: none
+}
+
+headers {
+  api-key: {{apiKey}}
+}
+
+body:json {
+  {
+      "title": "{{tempBookTitle}}",
+      "author": "Gabriel García Márquez",
+      "genre": "fiction",
+      "yearPublished": 1967
+  }
+}
+
+assert {
+  res.status: eq 201
+}
+
+script:pre-request {
+  const {faker} = require('@faker-js/faker')
+  const randomName = faker.person.fullName();
+  
+  bru.setVar('tempBookTitle', randomName)
+}
+
+script:post-response {
+  bru.setEnvVar('bookId', res.body.id)
+  bru.setEnvVar('bookTitle', res.body.title)
+}
